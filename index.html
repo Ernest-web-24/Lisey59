@@ -2,74 +2,98 @@
 <html lang="ky">
 <head>
     <meta charset="UTF-8">
-    <title>Менин биринчи веб-сайтым</title>
+    <title>Издөө Визуалдаштыруу</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f6ff;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #2563eb;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        section {
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-        footer {
-            background-color: #1e293b;
-            color: white;
-            text-align: center;
-            padding: 10px;
-        }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; }
+        #container { display: flex; align-items: flex-end; height: 200px; gap: 8px; margin: 20px; padding: 20px; background: white; border-radius: 10px; }
+        .bar { width: 35px; background: #3498db; color: white; text-align: center; border-radius: 4px 4px 0 0; transition: 0.3s; }
+        .found { background: #2ecc71 !important; transform: scale(1.1); } /* Табылгандагы түс */
+        .checking { background: #e74c3c !important; } /* Текшерилип жаткан түс */
+        .controls { display: flex; gap: 10px; margin-top: 10px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; cursor: pointer; background: #34495e; color: white; border: none; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>🌐 Менин веб-сайтым</h1>
-    <p>Бул сайт GitHub Pages же Netlify аркылуу интернетке жайгаштырылат</p>
-</header>
+    <h2>Издөө Алгоритмдери</h2>
+    
+    <div id="container"></div>
 
-<section>
-    <div class="card">
-        <h2>📌 Бул эмне сайт?</h2>
-        <p>
-            Бул — HTML жана CSS менен жасалган жөнөкөй веб-сайт.
-            Биз аны хостингке жайгаштыруу аркылуу интернетке чыгарабыз.
-        </p>
+    <div class="controls">
+        <input type="number" id="searchInput" placeholder="Сан жаз...">
+        <button onclick="startLinearSearch()">Сызыктуу издөө</button>
+        <button onclick="startBinarySearch()">Бинардык издөө (сорттолгон)</button>
     </div>
 
-    <div class="card">
-        <h2>🏠 Хостинг деген эмне?</h2>
-        <p>
-            Хостинг — бул сайттын интернеттеги <strong>үйү</strong>.
-            Сайт ошол үйдө сакталат жана ар ким көрө алат.
-        </p>
-    </div>
+    <script>
+        const container = document.getElementById("container");
+        let values = [10, 25, 30, 45, 50, 65, 80, 95]; // Сорттолгон массив
 
-    <div class="card">
-        <h2>🚀 Кайсы жерге жайгаштырабыз?</h2>
-        <ul>
-            <li>GitHub Pages</li>
-            <li>Netlify</li>
-        </ul>
-    </div>
-</section>
+        function renderBars() {
+            container.innerHTML = "";
+            values.forEach(val => {
+                const bar = document.createElement("div");
+                bar.classList.add("bar");
+                bar.style.height = (val * 2) + "px";
+                bar.innerText = val;
+                container.appendChild(bar);
+            });
+        }
 
-<footer>
-    <p>© 2026 | Программалоонун негиздери сабагы</p>
-</footer>
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
+        // 1. Сызыктуу издөө
+        async function startLinearSearch() {
+            renderBars();
+            let target = parseInt(document.getElementById("searchInput").value);
+            const bars = document.getElementsByClassName("bar");
+
+            for (let i = 0; i < bars.length; i++) {
+                bars[i].classList.add("checking");
+                await sleep(500);
+
+                if (values[i] === target) {
+                    bars[i].classList.remove("checking");
+                    bars[i].classList.add("found");
+                    return;
+                }
+                bars[i].classList.remove("checking");
+            }
+            alert("Табылган жок!");
+        }
+
+        // 2. Бинардык издөө
+        async function startBinarySearch() {
+            renderBars();
+            let target = parseInt(document.getElementById("searchInput").value);
+            const bars = document.getElementsByClassName("bar");
+
+            let low = 0;
+            let high = values.length - 1;
+
+            while (low <= high) {
+                let mid = Math.floor((low + high) / 2);
+                bars[mid].classList.add("checking");
+                await sleep(800);
+
+                if (values[mid] === target) {
+                    bars[mid].classList.remove("checking");
+                    bars[mid].classList.add("found");
+                    return;
+                }
+
+                if (values[mid] < target) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+                bars[mid].classList.remove("checking");
+            }
+            alert("Табылган жок!");
+        }
+
+        renderBars();
+    </script>
 </body>
 </html>
